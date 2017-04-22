@@ -1,0 +1,7 @@
+target
+/crt00.o
+/init.o
+/test.gba
+/Cargo.lock
+/header.o
+/gbafix

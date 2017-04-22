@@ -1,0 +1,9 @@
+[package]
+authors = ["Russell McClellan <russell.mcclellan@gmail.com>"]
+name = "gba_hw"
+version = "0.1.0"
+
+[dependencies]
+bitflags = "0.8.2"
+vcell = "0.1.0"
+volatile-register = "0.2.0"

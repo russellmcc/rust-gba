@@ -1,0 +1,16 @@
+[package]
+authors = ["Russell McClellan <russell.mcclellan@gmail.com>"]
+name = "gbatest"
+version = "0.1.0"
+
+[dependencies]
+volatile-register = "0.2.0"
+
+[dependencies.gba_rt]
+path = "../gba-rt"
+
+[dependencies.gba_bios]
+path = "../gba-bios"
+
+[dependencies.gba_hw]
+path = "../gba_hw"
