@@ -105,4 +105,4 @@ register!(
     /// application uses any of the `wait..` functions from the bios.
     ///
     /// usage is identical to `irq_acknowledge`.
-    pub irq_acknowledge_bios: WO<SourceSet> => 0x4000202);
+    pub irq_acknowledge_bios: WO<SourceSet> => 0x03007FF8);
