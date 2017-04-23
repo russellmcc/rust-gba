@@ -24,10 +24,13 @@ pub fn main() -> ! {
         (*ie_reg).write(1 << 12);
         (*ime_reg).write(1);
         (*keycnt_reg).write(1 << 14 | 1 << 3);
-        let video_mode = 0x4000000 as *mut ReadWrite<u32>;
+        let display_control = gba_hw::video::display_control();
         let p_screen = 0x6000000 as *mut ReadWrite<u16>;
         let keyinput_reg = 0x4000130 as *const ReadOnly<u16>;
-        (*video_mode).write(0x403);
+        display_control.write(
+            gba_hw::video::DisplayControlWrite::default()
+                .set_video_mode(3)
+                .set_display_layers(gba_hw::video::BG2));
         for y in 0..160 {
             for x in 0..240 {
                 (*p_screen.offset(x + y*240)).write(31 << 5);
