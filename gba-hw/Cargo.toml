@@ -1,6 +1,6 @@
 [package]
 authors = ["Russell McClellan <russell.mcclellan@gmail.com>"]
-name = "gba_hw"
+name = "gba-hw"
 version = "0.1.0"
 
 [dependencies]

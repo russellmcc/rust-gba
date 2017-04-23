@@ -1,6 +1,6 @@
 [package]
 authors = ["Russell McClellan <russell.mcclellan@gmail.com>"]
-name = "gba_register_generator"
+name = "gba-register-generator"
 version = "0.1.0"
 
 [dependencies]

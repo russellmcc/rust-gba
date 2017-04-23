@@ -1,8 +1,8 @@
 [package]
-name = "gba_bios"
+name = "gba-bios"
 version = "0.1.0"
 authors = ["Russell McClellan <russell.mcclellan@gmail.com>"]
 description = "Low level bindings to game boy advance BIOS bindings"
 
-[dependencies.gba_hw]
-path = "../gba_hw"
+[dependencies.gba-hw]
+path = "../gba-hw"

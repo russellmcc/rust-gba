@@ -1,5 +1,5 @@
 [root]
-name = "gba_register_generator"
+name = "gba-register-generator"
 version = "0.1.0"
 dependencies = [
  "derive_builder 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",

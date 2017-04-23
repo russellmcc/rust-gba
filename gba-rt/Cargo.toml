@@ -1,7 +1,7 @@
 [package]
 authors = ["Russell McClellan <russell.mcclellan@gmail.com>"]
 build = "build.rs"
-name = "gba_rt"
+name = "gba-rt"
 version = "0.1.0"
 
 [dependencies]
@@ -11,8 +11,8 @@ linked_list_allocator = "^0.2.5"
 features = ["mem"]
 git = "https://github.com/rust-lang-nursery/compiler-builtins"
 
-[dependencies.gba_bios]
+[dependencies.gba-bios]
 path = "../gba-bios"
 
-[dependencies.gba_hw]
-path = "../gba_hw"
+[dependencies.gba-hw]
+path = "../gba-hw"
