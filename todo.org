@@ -1,0 +1,23 @@
+* project todo
+** TODO use mut-annotations in new register mod (write needs mut)
+** TODO finish register generator - write read/write/modify struct
+pub struct Modify { pub read: BlehRead, pub write: BlehWrite }
+pub fn modify<F: FnOnce(Modify) -> Write>(&mut self, func: F);
+** TODO finish register generator - check if we can disable into for usize fields so literals will work
+** TODO move register generator to own lib crate
+** TODO integrate register generator into gba-hw build
+** TODO rename crates with hyphen
+** TODO simple unsafe gba_hw - basic display
+** TODO sprite tool chain
+** TODO unsafe gba_hw - rest of system
+** TODO gba_rt - make interrupt handler use gba_hw for acknowledging
+** TODO make wait for interrupt functions safe by caching
+** TODO gba_hw - come up with a plan for safe access
+Idea: Pass "GBA" to main thread, allow access only through CriticalGBA
+which is exposed through hardware.
+** TODO investigate/discard CI testing (mGBA?)
+* "book" structure
+** environment set-up
+** Use MGBA to debug
+* Useful links
+** https://deterministic.space/elegant-apis-in-rust.html

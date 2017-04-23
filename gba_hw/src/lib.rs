@@ -5,7 +5,7 @@ extern crate bitflags;
 extern crate vcell;
 
 mod registers;
-use registers::*;
+pub use registers::*;
 
 macro_rules! register {
     ($(#[$attr:meta])* pub $name:ident : $type:ty => $addr:expr) => {

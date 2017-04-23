@@ -7,8 +7,7 @@ extern crate gba_rt;
 extern crate gba_bios;
 extern crate gba_hw;
 
-extern crate volatile_register;
-use volatile_register::{RW, RO};
+use gba_hw::{ReadWrite, ReadOnly};
 
 
 #[no_mangle]
@@ -16,18 +15,18 @@ pub fn main() -> ! {
     unsafe {
         gba_rt::init_heap();
 
-        let ie_reg = 0x4000200 as *const RW<u16>;
-        let if_reg = 0x4000202 as *const RW<u16>;
-        let ime_reg = 0x4000208 as *const RW<u16>;
+        let ie_reg = 0x4000200 as *mut ReadWrite<u16>;
+        let if_reg = 0x4000202 as *mut ReadWrite<u16>;
+        let ime_reg = 0x4000208 as *mut ReadWrite<u16>;
 //        let dispstat_reg = 0x4000004 as *const RW<u16>;
-        let keycnt_reg = 0x4000132 as *const RW<u16>;
+        let keycnt_reg = 0x4000132 as *mut ReadWrite<u16>;
         (*if_reg).write(1 << 12);
         (*ie_reg).write(1 << 12);
         (*ime_reg).write(1);
         (*keycnt_reg).write(1 << 14 | 1 << 3);
-        let video_mode = 0x4000000 as *const RW<u32>;
-        let p_screen = 0x6000000 as *const RW<u16>;
-        let keyinput_reg = 0x4000130 as *const RO<u16>;
+        let video_mode = 0x4000000 as *mut ReadWrite<u32>;
+        let p_screen = 0x6000000 as *mut ReadWrite<u16>;
+        let keyinput_reg = 0x4000130 as *const ReadOnly<u16>;
         (*video_mode).write(0x403);
         for y in 0..160 {
             for x in 0..240 {
