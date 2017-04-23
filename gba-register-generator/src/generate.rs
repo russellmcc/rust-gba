@@ -1,30 +1,29 @@
 use ::register::*;
-use ::errors::*;
 use std::rc::Rc;
 use quote::Tokens;
 use syn::Ident;
 
-fn generate_docs(doc: &str) -> Result<Tokens> {
+fn generate_docs(doc: &str) -> Tokens {
     let docs: Vec<Tokens> = doc.lines().map(|line| {
         quote! {
             #[doc=#line]
         }
     }).collect();
-    Ok(quote!{ #(#docs)* })
+    quote!{ #(#docs)* }
 }
 
-fn generate_enum_variant_branch(variant: &Variant) -> Result<Tokens> {
+fn generate_enum_variant_branch(variant: &Variant) -> Tokens {
     let title = &variant.title;
-    let docs = generate_docs(&variant.doc)?;
+    let docs = generate_docs(&variant.doc);
     match variant.value {
-        None => Ok(quote! {
+        None => quote! {
             #docs #title
-        }),
+        },
         Some(v) => {
             let v_hacked = Ident::new(v.to_string());
-            Ok(quote! {
+            quote! {
                 #docs #title = #v_hacked
-            })
+            }
         }
     }
 }
@@ -32,33 +31,32 @@ fn generate_enum_variant_branch(variant: &Variant) -> Result<Tokens> {
 fn generate_enum(title: &Ident,
                  repr: &Ident,
                  variants: &[Variant]) ->
-    Result<Tokens> {
-        if variants.is_empty() {
-            bail!("Must have at least one variant in each enum")
-        }
+    Tokens {
+        assert!(!variants.is_empty(),
+                "Must have at least one variant in each enum");
         let variants =
             variants.iter().map(generate_enum_variant_branch)
-            .collect::<Result<Vec<_>>>()?;
+            .collect::<Vec<_>>();
 
-        Ok(quote! {
+        quote! {
             #[repr(#repr)]
             pub enum #title {
                 #(#variants),*
             }
-        })
+        }
 }
 
-pub fn generate_register_struct(register: &Register) -> Result<Tokens> {
+pub fn generate_register_struct(register: &Register) -> Tokens {
     let title = &register.title;
     let repr = &register.repr;
-    let docs = generate_docs(&register.doc)?;
+    let docs = generate_docs(&register.doc);
 
-    Ok(quote! {
+    quote! {
         #docs
         pub struct #title {
             value: VolatileCell<#repr>,
         }
-    })
+    }
 }
 
 #[derive(Default)]
@@ -133,12 +131,12 @@ fn get_field_info(field: &Field, repr: Ident) -> FieldInfo {
     FieldInfo { field, mask, type_ident, from_bits, as_bits }
 }
 
-fn generate_register_write(register: &Register) -> Result<RegisterMode> {
+fn generate_register_write(register: &Register) -> RegisterMode {
     if register
         .fields
         .iter()
         .all(|f| f.access == Access::ReadOnly) {
-            return Ok(RegisterMode::default());
+            return RegisterMode::default();
         }
 
     let repr = &register.repr;
@@ -157,13 +155,13 @@ fn generate_register_write(register: &Register) -> Result<RegisterMode> {
             ref type_ident,
             ref as_bits,
             ..
-        }| -> Result<Tokens> {
-            let doc_tokens = generate_docs(doc)?;
+        }| -> Tokens {
+            let doc_tokens = generate_docs(doc);
             let mask_hacked = Ident::new(mask.to_string());
             let shift_hacked = Ident::new(start.to_string());
             let bits = as_bits(quote!{tt});
             let setter_name = Ident::new(format!("set_{}", name));
-            Ok(quote!{
+            quote!{
                 #doc_tokens
                 #[inline]
                 pub fn #setter_name (&mut self, tt: #type_ident) -> &mut #title {
@@ -171,8 +169,8 @@ fn generate_register_write(register: &Register) -> Result<RegisterMode> {
                     self.value |= ((#bits) << #shift_hacked) & #mask_hacked;
                     self
                 }
-            })
-        }).collect::<Result<Vec<_>>>()?;
+            }
+        }).collect::<Vec<_>>();
 
     let fast_enum_setters = writable_fields()
         .filter_map(|FieldInfo {
@@ -193,21 +191,21 @@ fn generate_register_write(register: &Register) -> Result<RegisterMode> {
                              v.quick_set.as_ref().map(|qs| (qs, &v.title))
                          })
                          .map(move |(quick_set, vtitle)| {
-                             Ok(quote!(
+                             quote!(
                                  #[inline]
                                  pub fn #quick_set (&mut self) -> &mut #title_ref {
                                      self.value &= !#mask_hacked;
                                      self.value |= ((#etitle :: #vtitle as #repr) << #shift_hacked) & #mask_hacked;
                                      self
                                  }
-                             ))
+                             )
                          }))
                 },
                 _ => None
             }
         })
         .flat_map(|ts| ts)
-        .collect::<Result<Vec<_>>>()?;
+        .collect::<Vec<_>>();
 
     let writable_bool_fields = || writable_fields()
         .filter_map(|fi| {
@@ -275,7 +273,7 @@ fn generate_register_write(register: &Register) -> Result<RegisterMode> {
             quote!{}
         };
 
-    Ok(RegisterMode {
+    RegisterMode {
         tokens: quote!{
             pub struct #title {
                 value: #repr
@@ -316,15 +314,15 @@ fn generate_register_write(register: &Register) -> Result<RegisterMode> {
 
             #modify_fn_impl
         }
-    })
+    }
 }
 
-fn generate_register_read(register: &Register) -> Result<RegisterMode> {
+fn generate_register_read(register: &Register) -> RegisterMode {
     if register
         .fields
         .iter()
         .all(|f| f.access == Access::WriteOnly) {
-            return Ok(RegisterMode::default());
+            return RegisterMode::default();
         }
 
     let readable_fields = || register.fields.iter()
@@ -338,19 +336,19 @@ fn generate_register_read(register: &Register) -> Result<RegisterMode> {
             ref type_ident,
             ref from_bits,
             ..
-        }| -> Result<Tokens> {
-            let doc_tokens = generate_docs(doc)?;
+        }| -> Tokens {
+            let doc_tokens = generate_docs(doc);
             let mask_hacked = Ident::new(mask.to_string());
             let shift_hacked = Ident::new(start.to_string());
             let body = from_bits(quote!{((self.value & #mask_hacked) >> #shift_hacked)});
-            Ok(quote!{
+            quote!{
                 #doc_tokens
                 #[inline]
                 pub fn #name (&self) -> #type_ident {
                     #body
                 }
-            })
-        }).collect::<Result<Vec<_>>>()?;
+            }
+        }).collect::<Vec<_>>();
     let repr = &register.repr;
     let fast_enum_accessors = readable_fields()
         .filter_map(|FieldInfo {
@@ -370,23 +368,23 @@ fn generate_register_read(register: &Register) -> Result<RegisterMode> {
                              v.quick_get.as_ref().map(|qg| (qg, &v.title))
                          })
                          .map(move |(quick_get, title)| {
-                             Ok(quote!(
+                             quote!(
                                  #[inline]
                                  pub fn #quick_get (&self) -> bool {
                                      return (#etitle :: #title as #repr) == ((self.value & #mask_hacked) >> #shift_hacked)
                                  }
-                             ))
+                             )
                          }))
                 },
                 _ => None
             }
         })
         .flat_map(|ts| ts)
-        .collect::<Result<Vec<_>>>()?;
+        .collect::<Vec<_>>();
 
     let title = Ident::from(format!("{}Read", register.title.to_string()));
 
-    Ok(RegisterMode {
+    RegisterMode {
         tokens: quote!{
             pub struct #title {
                 value: #repr
@@ -403,13 +401,11 @@ fn generate_register_read(register: &Register) -> Result<RegisterMode> {
                 #title {value: self.value.get()}
             }
         }
-    })
+    }
 }
 
-pub fn generate_register(register: &Register) -> Result<Tokens> {
-    if register.fields.is_empty() {
-        bail!("Must have at least one field")
-    }
+pub fn generate_register(register: &Register) -> Tokens {
+    assert!(!register.fields.is_empty(), "Must have at least one field");
 
     // first, generate all enums.
     let enum_definitions : Vec<Tokens> =
@@ -424,20 +420,20 @@ pub fn generate_register(register: &Register) -> Result<Tokens> {
                                     &register.repr,
                                     variants)),
             _ => None
-        }).collect::<Result<Vec<_>>>()?;
+        }).collect::<Vec<_>>();
 
-    let register_struct = generate_register_struct(register)?;
+    let register_struct = generate_register_struct(register);
     let title = &register.title;
     let RegisterMode {
         tokens: read_tokens,
         main_impl_fn: read_impl_fn,
-    } = generate_register_read(register)?;
+    } = generate_register_read(register);
     let RegisterMode {
         tokens: write_tokens,
         main_impl_fn: write_impl_fn,
-    } = generate_register_write(register)?;
+    } = generate_register_write(register);
 
-    Ok(quote! {
+    quote! {
         use core::mem;
         use vcell::VolatileCell;
 
@@ -453,5 +449,5 @@ pub fn generate_register(register: &Register) -> Result<Tokens> {
             #read_impl_fn
             #write_impl_fn
         }
-    })
+    }
 }
