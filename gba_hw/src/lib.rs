@@ -2,15 +2,17 @@
 
 #[macro_use]
 extern crate bitflags;
-extern crate volatile_register;
 extern crate vcell;
+
+mod registers;
+use registers::*;
 
 macro_rules! register {
     ($(#[$attr:meta])* pub $name:ident : $type:ty => $addr:expr) => {
         $(#[$attr])*
         #[inline(always)]
-        pub unsafe fn $name() -> &'static $type {
-            &*($addr as *const $type)
+        pub unsafe fn $name() -> &'static mut $type {
+            &mut *($addr as *mut $type)
         }
     };
 }
