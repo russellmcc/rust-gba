@@ -17,5 +17,7 @@ macro_rules! register {
     };
 }
 
+include!(concat!(env!("OUT_DIR"), "/gen.rs"));
+
 pub mod interrupts;
 pub mod video;

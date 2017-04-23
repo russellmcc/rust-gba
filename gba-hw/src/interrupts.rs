@@ -51,7 +51,7 @@ use ::{ReadOnly, WriteOnly, ReadWrite};
 
 register!(
     /// `master_enable` is the master interrupt enable/disable flag.
-    pub master_enable: ReadWrite<MasterEnable> => 0x4000208);
+    pub master_enable: ReadWrite<MasterEnable> => 0x400_0208);
 
 register!(
     /// `enable` is the interrupt enable register.
@@ -59,14 +59,14 @@ register!(
     /// Any interrupts in the set will be enabled.
     ///
     /// Note that interrupts also have to be enabled in their corresponding peripheral.
-    pub enable: ReadWrite<SourceSet> => 0x4000200);
+    pub enable: ReadWrite<SourceSet> => 0x400_0200);
 
 register!(
     /// `sources` is the interrupt flag register.
     ///
     /// Inside an interrupt context, this indicates the
     /// source or sources that caused the current interrupt
-    pub sources: ReadOnly<SourceSet> => 0x4000202);
+    pub sources: ReadOnly<SourceSet> => 0x400_0202);
 
 register!(
     /// `irq_acknowledge` is the special interrupt acknowledge
@@ -95,7 +95,7 @@ register!(
     ///     interrupts::irq_acknowledge().write(interrupts::SourceSet::all());
     /// }
     /// ```
-    pub irq_acknowledge: WriteOnly<SourceSet> => 0x4000202);
+    pub irq_acknowledge: WriteOnly<SourceSet> => 0x400_0202);
 
 register!(
     /// `irq_acknowledge_bios` is the special interrupt acknowledge
@@ -105,4 +105,4 @@ register!(
     /// application uses any of the `wait..` functions from the bios.
     ///
     /// usage is identical to `irq_acknowledge`.
-    pub irq_acknowledge_bios: WriteOnly<SourceSet> => 0x03007FF8);
+    pub irq_acknowledge_bios: WriteOnly<SourceSet> => 0x0300_7FF8);

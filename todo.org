@@ -1,7 +1,7 @@
 * project todo
-** TODO integrate register generator into gba-hw build
 ** TODO simple unsafe gba_hw - basic display
 ** TODO sprite tool chain
+** TODO better docs for display controller
 ** TODO unsafe gba_hw - rest of system
 ** TODO make wait for interrupt functions safe by caching
 ** TODO gba_hw - come up with a plan for safe access
