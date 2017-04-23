@@ -33,7 +33,7 @@ fn generate_enum(title: &Ident,
                  repr: &Ident,
                  variants: &[Variant]) ->
     Result<Tokens> {
-        if variants.len() == 0 {
+        if variants.is_empty() {
             bail!("Must have at least one variant in each enum")
         }
         let variants =
@@ -79,7 +79,7 @@ struct FieldInfo<'a> {
     from_bits: Rc<Fn(Tokens) -> Tokens>,
 }
 
-fn get_field_info<'a>(field: &'a Field, repr: Ident) -> FieldInfo<'a> {
+fn get_field_info(field: &Field, repr: Ident) -> FieldInfo {
     let mask = (field.start..(field.start + field.size))
         .fold(0usize, |m, i| m | 1 << i);
     let type_ident = match field.format {
@@ -180,8 +180,8 @@ fn generate_register_write(register: &Register) -> Result<RegisterMode> {
             ref mask,
             ..
         }| {
-            match format {
-                &Format::Enum {
+            match *format {
+                Format::Enum {
                     title: ref etitle,
                     ref variants
                 } => {
@@ -211,8 +211,8 @@ fn generate_register_write(register: &Register) -> Result<RegisterMode> {
 
     let writable_bool_fields = || writable_fields()
         .filter_map(|fi| {
-            match &fi.field.format {
-                &Format::Bool {
+            match fi.field.format {
+                Format::Bool {
                     quick_set_true: ref qst,
                     quick_set_false: ref qsf,
                 } => Some(((qst, qsf), fi)),
@@ -358,8 +358,8 @@ fn generate_register_read(register: &Register) -> Result<RegisterMode> {
             ref mask,
             ..
         }| {
-            match format {
-                &Format::Enum {
+            match *format {
+                Format::Enum {
                     title: ref etitle,
                     ref variants
                 } => {
@@ -407,7 +407,7 @@ fn generate_register_read(register: &Register) -> Result<RegisterMode> {
 }
 
 pub fn generate_register(register: &Register) -> Result<Tokens> {
-    if register.fields.len() == 0 {
+    if register.fields.is_empty() {
         bail!("Must have at least one field")
     }
 
@@ -416,7 +416,7 @@ pub fn generate_register(register: &Register) -> Result<Tokens> {
         register
         .fields
         .iter()
-        .filter_map(|x| return match x.format {
+        .filter_map(|x| match x.format {
             Format::Enum {
                 ref title,
                 ref variants
