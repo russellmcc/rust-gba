@@ -4,9 +4,6 @@
 use core::ptr;
 extern crate compiler_builtins;
 
-extern crate volatile_register;
-use volatile_register::WO;
-
 extern crate gba_hw;
 
 extern crate linked_list_allocator;

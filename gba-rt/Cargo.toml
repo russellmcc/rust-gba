@@ -6,7 +6,6 @@ version = "0.1.0"
 
 [dependencies]
 linked_list_allocator = "^0.2.5"
-volatile-register = "0.2.0"
 
 [dependencies.compiler_builtins]
 features = ["mem"]

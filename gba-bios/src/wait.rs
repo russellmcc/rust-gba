@@ -1,5 +1,3 @@
-use gba_hw;
-
 pub use gba_hw::interrupts::SourceSet;
 
 /// Halts CPU until any enabled interrupt is hit.

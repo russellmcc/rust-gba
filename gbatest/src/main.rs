@@ -19,7 +19,7 @@ pub fn main() -> ! {
         let ie_reg = 0x4000200 as *const RW<u16>;
         let if_reg = 0x4000202 as *const RW<u16>;
         let ime_reg = 0x4000208 as *const RW<u16>;
-        let dispstat_reg = 0x4000004 as *const RW<u16>;
+//        let dispstat_reg = 0x4000004 as *const RW<u16>;
         let keycnt_reg = 0x4000132 as *const RW<u16>;
         (*if_reg).write(1 << 12);
         (*ie_reg).write(1 << 12);
@@ -35,7 +35,7 @@ pub fn main() -> ! {
             }
         }
 
-        while ((*keyinput_reg).read() & 1 << 4 == 1 << 4) {}
+        while (*keyinput_reg).read() & 1 << 4 == 1 << 4 {}
 
         for y in 0..160 {
             for x in 0..240 {
