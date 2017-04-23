@@ -3,7 +3,6 @@
 ** TODO simple unsafe gba_hw - basic display
 ** TODO sprite tool chain
 ** TODO unsafe gba_hw - rest of system
-** TODO gba_rt - make interrupt handler use gba_hw for acknowledging
 ** TODO make wait for interrupt functions safe by caching
 ** TODO gba_hw - come up with a plan for safe access
 Idea: Pass "GBA" to main thread, allow access only through CriticalGBA

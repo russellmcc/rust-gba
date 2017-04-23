@@ -108,6 +108,6 @@ pub unsafe fn wait_for_new_interrupt(interrupts: SourceSet) {
 /// `IME` register.
 #[inline(always)]
 pub unsafe fn wait_for_new_vblank() {
-    asm!("swi 0x05");
+    asm!("swi 0x05":::"r0 r1");
 }
 
